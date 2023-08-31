@@ -1,0 +1,63 @@
+{
+    "name": "LifeQuality",
+    "displayName": "生活质量",
+    "description": "提示VsCode的使用生活质量",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.54.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "*"
+    ],
+    "main": "./extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "LifeQuality.helloWorld",
+                "title": "Hello World"
+            }
+        ],
+        "configuration": [
+            {
+                "title": "背景图片",
+                "properties": {
+                    "LifeQuality.background.full": {
+                        "type": "string",
+                        "description": "全屏背景图片地址"
+                    },
+                    "LifeQuality.background.fullOpacity": {
+                        "type": "number",
+                        "description": "全屏背景图片透明度，全透明0到不透明1，推荐0.05",
+                        "default": 0.05
+                    }
+                }
+            },
+            {
+                "title": "笔记",
+                "properties": {
+                    "LifeQuality.笔记.全屏背景图片": {
+                        "type": "array"
+                    }
+                }
+            }
+        ]
+    },
+    "scripts": {
+        "lint": "eslint .",
+        "pretest": "npm run lint",
+        "test": "node ./test/runTest.js"
+    },
+    "devDependencies": {
+        "@types/vscode": "^1.54.0",
+        "@types/mocha": "^10.0.1",
+        "@types/node": "16.x",
+        "eslint": "^8.47.0",
+        "glob": "^10.3.3",
+        "mocha": "^10.2.0",
+        "typescript": "^5.1.6",
+        "@vscode/test-electron": "^2.3.4"
+    }
+}
