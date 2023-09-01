@@ -9,10 +9,8 @@
     "categories": [
         "Other"
     ],
-    "activationEvents": [
-        "*"
-    ],
-    "main": "./extension.js",
+    "activationEvents": ["onStartupFinished"],
+    "main": "./src/index.js",
     "contributes": {
         "commands": [
             {
@@ -22,16 +20,45 @@
         ],
         "configuration": [
             {
-                "title": "背景图片",
+                "title": "背景图片（重启生效）",
                 "properties": {
-                    "LifeQuality.background.full": {
-                        "type": "string",
-                        "description": "全屏背景图片地址"
+                    "LifeQuality.background.all.isOpened": {
+                        "type": "boolean",
+                        "description": "是否开启图片背景",
+                        "default": true
                     },
-                    "LifeQuality.background.fullOpacity": {
+                    "LifeQuality.background.all.showType": {
+                        "type": "string",
+                        "description": "背景图片显示区域模式",
+                        "default": "fullScreen",
+                        "enum": ["fullScreen", "partition"],
+                        "enumDescriptions": [
+                            "全屏显示背景图片",
+                            "每个区域单独显示"
+                        ]
+                    },
+                    "LifeQuality.background.fullScreen.imgUrls": {
+                        "type": "array",
+                        "description": "全屏背景图片地址，可以添加多个并设置背景选择机制",
+                        "default": [],
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "LifeQuality.background.fullScreen.selectType": {
+                        "type": "string",
+                        "description": "在配置了多个背景图片时有效，背景图片选择模式",
+                        "default": "random",
+                        "enum": ["random", "carousel"],
+                        "enumDescriptions": [
+                            "在启动是随机显示一张图片",
+                            "轮播所有的背景图片"
+                        ]
+                    },
+                    "LifeQuality.background.fullScreen.opacity": {
                         "type": "number",
-                        "description": "全屏背景图片透明度，全透明0到不透明1，推荐0.05",
-                        "default": 0.05
+                        "description": "全屏背景图片透明度，全透明0到不透明1，推荐0.075",
+                        "default": 0.075
                     }
                 }
             },
