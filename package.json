@@ -22,12 +22,13 @@
             {
                 "title": "背景图片（重启生效）",
                 "properties": {
-                    "LifeQuality.background.all.isOpened": {
+                    "LifeQuality.background.isOpened": {
                         "type": "boolean",
                         "description": "是否开启图片背景",
-                        "default": true
+                        "default": true,
+                        "order": 0
                     },
-                    "LifeQuality.background.all.showType": {
+                    "LifeQuality.background.showType": {
                         "type": "string",
                         "description": "背景图片显示区域模式",
                         "default": "fullScreen",
@@ -35,31 +36,102 @@
                         "enumDescriptions": [
                             "全屏显示背景图片",
                             "每个区域单独显示"
-                        ]
+                        ],
+                        "order": 1
                     },
-                    "LifeQuality.background.fullScreen.imgUrls": {
-                        "type": "array",
-                        "description": "全屏背景图片地址，可以添加多个并设置背景选择机制",
-                        "default": [],
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "LifeQuality.background.fullScreen.selectType": {
+                    "LifeQuality.background.fullScreen.imgUrl": {
                         "type": "string",
-                        "description": "在配置了多个背景图片时有效，背景图片选择模式",
-                        "default": "random",
-                        "enum": ["random", "carousel"],
-                        "enumDescriptions": [
-                            "在启动是随机显示一张图片",
-                            "轮播所有的背景图片"
-                        ]
+                        "markdownDescription": "`全屏`背景图片地址，显示区域选择全屏模式时生效",
+                        "default": "",
+                        "order": 2
                     },
                     "LifeQuality.background.fullScreen.opacity": {
                         "type": "number",
-                        "description": "全屏背景图片透明度，全透明0到不透明1，推荐0.075",
-                        "default": 0.075
+                        "markdownDescription": "`全屏`背景图片图片透明度，全透明0到不透明1，推荐0.1",
+                        "default": 0.1,
+                        "order": 3
+                    },
+                    "LifeQuality.background.titlebar.imgUrl": {
+                        "type": "string",
+                        "markdownDescription": "`菜单栏`背景图片地址，显示区域选择区域模式时生效",
+                        "default": ""
+                    },
+                    "LifeQuality.background.titlebar.opacity": {
+                        "type": "number",
+                        "markdownDescription": "`菜单栏`背景图片图片透明度，全透明0到不透明1，推荐0.1",
+                        "default": 0.1
+                    },
+                    "LifeQuality.background.banner.imgUrl": {
+                        "type": "string",
+                        "markdownDescription": "`横幅`背景图片地址，显示区域选择区域模式时生效",
+                        "default": ""
+                    },
+                    "LifeQuality.background.banner.opacity": {
+                        "type": "number",
+                        "markdownDescription": "`横幅`背景图片图片透明度，全透明0到不透明1，推荐0.1",
+                        "default": 0.1
+                    },
+                    "LifeQuality.background.activitybar.imgUrl": {
+                        "type": "string",
+                        "markdownDescription": "`活动栏`背景图片地址，显示区域选择区域模式时生效",
+                        "default": ""
+                    },
+                    "LifeQuality.background.activitybar.opacity": {
+                        "type": "number",
+                        "markdownDescription": "`活动栏`背景图片图片透明度，全透明0到不透明1，推荐0.1",
+                        "default": 0.1
+                    },
+                    "LifeQuality.background.sidebar.imgUrl": {
+                        "type": "string",
+                        "markdownDescription": "`主侧边栏`背景图片地址，显示区域选择区域模式时生效",
+                        "default": ""
+                    },
+                    "LifeQuality.background.sidebar.opacity": {
+                        "type": "number",
+                        "markdownDescription": "`主侧边栏`背景图片图片透明度，全透明0到不透明1，推荐0.1",
+                        "default": 0.1
+                    },
+                    "LifeQuality.background.editor.imgUrl": {
+                        "type": "string",
+                        "markdownDescription": "`编辑器`背景图片地址，显示区域选择区域模式时生效",
+                        "default": ""
+                    },
+                    "LifeQuality.background.editor.opacity": {
+                        "type": "number",
+                        "markdownDescription": "`编辑器`背景图片图片透明度，全透明0到不透明1，推荐0.1",
+                        "default": 0.1
+                    },
+                    "LifeQuality.background.panel.imgUrl": {
+                        "type": "string",
+                        "markdownDescription": "`面板`背景图片地址，显示区域选择区域模式时生效",
+                        "default": ""
+                    },
+                    "LifeQuality.background.panel.opacity": {
+                        "type": "number",
+                        "markdownDescription": "`面板`背景图片图片透明度，全透明0到不透明1，推荐0.1",
+                        "default": 0.1
+                    },
+                    "LifeQuality.background.auxiliarybar.imgUrl": {
+                        "type": "string",
+                        "markdownDescription": "`辅助侧边栏`背景图片地址，显示区域选择区域模式时生效",
+                        "default": ""
+                    },
+                    "LifeQuality.background.auxiliarybar.opacity": {
+                        "type": "number",
+                        "markdownDescription": "`辅助侧边栏`背景图片图片透明度，全透明0到不透明1，推荐0.1",
+                        "default": 0.1
+                    },
+                    "LifeQuality.background.statusbar.imgUrl": {
+                        "type": "string",
+                        "markdownDescription": "`状态栏`背景图片地址，显示区域选择区域模式时生效",
+                        "default": ""
+                    },
+                    "LifeQuality.background.statusbar.opacity": {
+                        "type": "number",
+                        "markdownDescription": "`状态栏`背景图片图片透明度，全透明0到不透明1，推荐0.1",
+                        "default": 0.1
                     }
+
                 }
             },
             {
