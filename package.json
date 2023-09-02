@@ -12,10 +12,10 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/cosy247/vscodePluginBackground.git"
+		"url": "https://github.com/cosy247/vscodePlugin-Background.git"
 	},
 	"bugs": {
-		"url": "https://github.com/cosy247/vscodePluginBackground/issues"
+		"url": "https://github.com/cosy247/vscodePlugin-Background/issues"
 	},
     "-----------------------------------------[ info ]-----------------------------------------": "",
 	"icon": "icon.jpg",
