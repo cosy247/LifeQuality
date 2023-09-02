@@ -48,6 +48,7 @@ function getBackgroundStyle(config) {
         /* ${styleEndLabel} */`.replace(/\s+/g, ' ');
     }
 }
+
 function replaceStyle(config) {
     const styleData = fs.readFileSync(styleFilePath, { encoding: 'utf8', flag: 'r' }).toString();
     const newStyleData = styleData.replace(styleRegExp, '') + getBackgroundStyle(config);
@@ -60,13 +61,16 @@ function clearStyle() {
     fs.writeFileSync(styleFilePath, newStyleData, {});
 }
 
-module.exports = (context) => {
-    vscode.workspace.onDidChangeConfiguration(() => {
-        const config = vscode.workspace.getConfiguration('LifeQuality').get('background');
-        if (config.isOpened) {
-            replaceStyle(config);
-        } else {
-            clearStyle();
-        }
-    });
+module.exports = {
+    activate(context) {
+        vscode.workspace.onDidChangeConfiguration(() => {
+            const config = vscode.workspace.getConfiguration('se').get('background');
+            if (config.isOpened) {
+                replaceStyle(config);
+            } else {
+                clearStyle();
+            }
+        });
+    },
+    deactivate() {},
 };

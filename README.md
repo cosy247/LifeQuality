@@ -1,6 +1,6 @@
-# LifeQuality README
+# Background README
 
-This is the README for your extension "LifeQuality". After writing up a brief description, we recommend including the following sections.
+This is the README for your extension "Background". After writing up a brief description, we recommend including the following sections.
 
 ## Features
 
