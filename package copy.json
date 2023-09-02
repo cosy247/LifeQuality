@@ -1,0 +1,143 @@
+{
+    "name": "background",
+    "displayName": "background",
+    "description": "%se.background.description%",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.54.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onStartupFinished"
+    ],
+    "main": "extension",
+    "contributes": {
+        "configuration": {
+            "title": "背景图片（重启生效）",
+            "properties": {
+                "se.background.isOpened": {
+                    "type": "boolean",
+                    "description": "是否开启图片背景",
+                    "default": true,
+                    "order": 0
+                },
+                "se.background.showType": {
+                    "type": "string",
+                    "description": "背景图片显示区域模式",
+                    "default": "fullScreen",
+                    "enum": [
+                        "fullScreen",
+                        "partition"
+                    ],
+                    "enumDescriptions": [
+                        "全屏显示背景图片",
+                        "每个区域单独显示"
+                    ],
+                    "order": 1
+                },
+                "se.background.fullScreen.imgUrl": {
+                    "type": "string",
+                    "markdownDescription": "`全屏`背景图片地址，显示区域选择全屏模式时生效",
+                    "default": "",
+                    "order": 2
+                },
+                "se.background.fullScreen.opacity": {
+                    "type": "number",
+                    "markdownDescription": "`全屏`背景图片图片透明度，全透明0到不透明1，推荐0.1",
+                    "default": 0.1,
+                    "order": 3
+                },
+                "se.background.titlebar.imgUrl": {
+                    "type": "string",
+                    "markdownDescription": "`菜单栏`背景图片地址，显示区域选择区域模式时生效",
+                    "default": ""
+                },
+                "se.background.titlebar.opacity": {
+                    "type": "number",
+                    "markdownDescription": "`菜单栏`背景图片图片透明度，全透明0到不透明1，推荐0.1",
+                    "default": 0.1
+                },
+                "se.background.banner.imgUrl": {
+                    "type": "string",
+                    "markdownDescription": "`横幅`背景图片地址，显示区域选择区域模式时生效",
+                    "default": ""
+                },
+                "se.background.banner.opacity": {
+                    "type": "number",
+                    "markdownDescription": "`横幅`背景图片图片透明度，全透明0到不透明1，推荐0.1",
+                    "default": 0.1
+                },
+                "se.background.activitybar.imgUrl": {
+                    "type": "string",
+                    "markdownDescription": "`活动栏`背景图片地址，显示区域选择区域模式时生效",
+                    "default": ""
+                },
+                "se.background.activitybar.opacity": {
+                    "type": "number",
+                    "markdownDescription": "`活动栏`背景图片图片透明度，全透明0到不透明1，推荐0.1",
+                    "default": 0.1
+                },
+                "se.background.sidebar.imgUrl": {
+                    "type": "string",
+                    "markdownDescription": "`主侧边栏`背景图片地址，显示区域选择区域模式时生效",
+                    "default": ""
+                },
+                "se.background.sidebar.opacity": {
+                    "type": "number",
+                    "markdownDescription": "`主侧边栏`背景图片图片透明度，全透明0到不透明1，推荐0.1",
+                    "default": 0.1
+                },
+                "se.background.editor.imgUrl": {
+                    "type": "string",
+                    "markdownDescription": "`编辑器`背景图片地址，显示区域选择区域模式时生效",
+                    "default": ""
+                },
+                "se.background.editor.opacity": {
+                    "type": "number",
+                    "markdownDescription": "`编辑器`背景图片图片透明度，全透明0到不透明1，推荐0.1",
+                    "default": 0.1
+                },
+                "se.background.panel.imgUrl": {
+                    "type": "string",
+                    "markdownDescription": "`面板`背景图片地址，显示区域选择区域模式时生效",
+                    "default": ""
+                },
+                "se.background.panel.opacity": {
+                    "type": "number",
+                    "markdownDescription": "`面板`背景图片图片透明度，全透明0到不透明1，推荐0.1",
+                    "default": 0.1
+                },
+                "se.background.auxiliarybar.imgUrl": {
+                    "type": "string",
+                    "markdownDescription": "`辅助侧边栏`背景图片地址，显示区域选择区域模式时生效",
+                    "default": ""
+                },
+                "se.background.auxiliarybar.opacity": {
+                    "type": "number",
+                    "markdownDescription": "`辅助侧边栏`背景图片图片透明度，全透明0到不透明1，推荐0.1",
+                    "default": 0.1
+                },
+                "se.background.statusbar.imgUrl": {
+                    "type": "string",
+                    "markdownDescription": "`状态栏`背景图片地址，显示区域选择区域模式时生效",
+                    "default": ""
+                },
+                "se.background.statusbar.opacity": {
+                    "type": "number",
+                    "markdownDescription": "`状态栏`背景图片图片透明度，全透明0到不透明1，推荐0.1",
+                    "default": 0.1
+                }
+            }
+        }
+    },
+    "devDependencies": {
+        "@types/vscode": "^1.54.0",
+        "@types/mocha": "^10.0.1",
+        "@types/node": "16.x",
+        "glob": "^10.3.3",
+        "mocha": "^10.2.0",
+        "@vscode/test-electron": "^2.3.4"
+    }
+}
