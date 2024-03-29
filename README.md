@@ -6,26 +6,30 @@
 
 开启背景图片功能，选中 `partition` 模式
 
-![alt text](readmeImgs/image.png)
+![partition](./readmeImgs/image1.png)
 
 配置各个区域的背景图片路径（本地地址，base64或者网页地址）和透明度。
 
-![alt text](readmeImgs/image-4.png)
+![partition](./readmeImgs/image2.png)
 
 结果展示：
 
-![alt text](PixPin_2024-03-29_08-59-47.png)
+![partition](./readmeImgs/image3.png)
 
 ## 定义全屏背景图片
 
 开启背景图片功能，选中 `fullScreen` 模式
 
-![alt text](readmeImgs/image-1.png)
+![fullScreen](./readmeImgs/image4.png)
 
 配置背景图片路径（本地地址，base64或者网页地址）和透明度。
 
-![alt text](readmeImgs/image-3.png)
+![fullScreen](./readmeImgs/image5.png)
 
 结果展示：
 
-![alt text](readmeImgs/image-2.png)
+![fullScreen](./readmeImgs/image6.png)
+
+## 备注
+
+在完成背景的配置后可以关闭插件或者卸载插件，在需要改变时在启动插件即可。

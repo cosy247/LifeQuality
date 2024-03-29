@@ -1,12 +1,12 @@
 {
-    "name": "background",
+    "name": "vsBackground",
     "version": "0.0.2",
-    "displayName": "background",
+    "displayName": "vsBackground",
     "description": "%se.background.description%",
     "-----------------------------------------[ author ]-----------------------------------------": "",
-	"publisher": "Cosy247",
+	"publisher": "cosy247",
 	"author": {
-		"name": "Cosy247",
+		"name": "cosy247",
 		"email": "705194673@qq.com",
 		"url": "https://cosy247.github.io"
 	},
@@ -37,25 +37,21 @@
     "main": "extension",
     "contributes": {
         "configuration": {
-            "title": "%se.background.title%",
+            "title": "Background",
             "properties": {
-                "se.background.isOpened": {
-                    "type": "boolean",
-                    "description": "%se.background.isOpened%",
-                    "default": true,
-                    "order": 0
-                },
                 "se.background.showType": {
                     "type": "string",
                     "description": "%se.background.showType%",
-                    "default": "fullScreen",
+                    "default": "none",
                     "enum": [
+                        "none",
                         "fullScreen",
                         "partition"
                     ],
                     "enumDescriptions": [
-                        "%se.background.fullScreen%",
-                        "%se.background.partition%"
+                        "%se.background.showType.none%",
+                        "%se.background.showType.fullScreen%",
+                        "%se.background.showType.partition%"
                     ],
                     "order": 1
                 },
