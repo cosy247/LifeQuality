@@ -6,29 +6,29 @@
 
 开启背景图片功能，选中 `partition` 模式
 
-![partition](./readmeImgs/image1.png)
+![partition1](readmeImgs/image1.png)
 
 配置各个区域的背景图片路径（本地地址，base64或者网页地址）和透明度。
 
-![partition](./readmeImgs/image2.png)
+![partition2](readmeImgs/image2.png)
 
 结果展示：
 
-![partition](./readmeImgs/image3.png)
+![partition3](readmeImgs/image3.png)
 
 ## 定义全屏背景图片
 
 开启背景图片功能，选中 `fullScreen` 模式
 
-![fullScreen](./readmeImgs/image4.png)
+![fullScreen1](readmeImgs/image4.png)
 
 配置背景图片路径（本地地址，base64或者网页地址）和透明度。
 
-![fullScreen](./readmeImgs/image5.png)
+![fullScreen2](readmeImgs/image5.png)
 
 结果展示：
 
-![fullScreen](./readmeImgs/image6.png)
+![fullScreen3](readmeImgs/image6.png)
 
 ## 备注
 
