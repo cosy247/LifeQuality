@@ -1,24 +1,24 @@
 {
-    "name": "background",
-    "version": "0.0.1",
-    "displayName": "background",
+    "name": "vsBackground",
+    "version": "0.0.2",
+    "displayName": "vsBackground",
     "description": "%se.background.description%",
     "-----------------------------------------[ author ]-----------------------------------------": "",
-	"publisher": "Cosy247",
+	"publisher": "cosy247",
 	"author": {
-		"name": "Cosy247",
+		"name": "cosy247",
 		"email": "705194673@qq.com",
 		"url": "https://cosy247.github.io"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/cosy247/vscodePlugin-Background.git"
+		"url": "https://github.com/cosy247/VscodePlugin-Background.git"
 	},
 	"bugs": {
-		"url": "https://github.com/cosy247/vscodePlugin-Background/issues"
+		"url": "https://github.com/cosy247/VscodePlugin-Background/issues"
 	},
     "-----------------------------------------[ info ]-----------------------------------------": "",
-	"icon": "icon.jpg",
+	"icon": "icon.png",
     "engines": {
         "vscode": "^1.54.0"
     },
@@ -37,25 +37,21 @@
     "main": "extension",
     "contributes": {
         "configuration": {
-            "title": "%se.background.title%",
+            "title": "Background",
             "properties": {
-                "se.background.isOpened": {
-                    "type": "boolean",
-                    "description": "%se.background.isOpened%",
-                    "default": true,
-                    "order": 0
-                },
                 "se.background.showType": {
                     "type": "string",
                     "description": "%se.background.showType%",
-                    "default": "fullScreen",
+                    "default": "none",
                     "enum": [
+                        "none",
                         "fullScreen",
                         "partition"
                     ],
                     "enumDescriptions": [
-                        "%se.background.fullScreen%",
-                        "%se.background.partition%"
+                        "%se.background.showType.none%",
+                        "%se.background.showType.fullScreen%",
+                        "%se.background.showType.partition%"
                     ],
                     "order": 1
                 },
@@ -74,82 +70,98 @@
                 "se.background.titlebar.imgUrl": {
                     "type": "string",
                     "markdownDescription": "%se.background.titlebar.imgUrl%",
-                    "default": ""
+                    "default": "",
+                    "order": 4
                 },
                 "se.background.titlebar.opacity": {
                     "type": "number",
                     "markdownDescription": "%se.background.titlebar.opacity%",
-                    "default": 0.1
+                    "default": 0.1,
+                    "order": 5
                 },
                 "se.background.banner.imgUrl": {
                     "type": "string",
                     "markdownDescription": "%se.background.banner.imgUrl%",
-                    "default": ""
+                    "default": "",
+                    "order": 6
                 },
                 "se.background.banner.opacity": {
                     "type": "number",
                     "markdownDescription": "%se.background.banner.opacity%",
-                    "default": 0.1
+                    "default": 0.1,
+                    "order": 7
                 },
                 "se.background.activitybar.imgUrl": {
                     "type": "string",
                     "markdownDescription": "%se.background.activitybar.imgUrl%",
-                    "default": ""
+                    "default": "",
+                    "order": 8
                 },
                 "se.background.activitybar.opacity": {
                     "type": "number",
                     "markdownDescription": "%se.background.activitybar.opacity%",
-                    "default": 0.1
+                    "default": 0.1,
+                    "order": 9
                 },
                 "se.background.sidebar.imgUrl": {
                     "type": "string",
                     "markdownDescription": "%se.background.sidebar.imgUrl%",
-                    "default": ""
+                    "default": "",
+                    "order": 10
                 },
                 "se.background.sidebar.opacity": {
                     "type": "number",
                     "markdownDescription": "%se.background.sidebar.opacity%",
-                    "default": 0.1
+                    "default": 0.1,
+                    "order": 11
                 },
                 "se.background.editor.imgUrl": {
                     "type": "string",
                     "markdownDescription": "%se.background.editor.imgUrl%",
-                    "default": ""
+                    "default": "",
+                    "order": 12
                 },
                 "se.background.editor.opacity": {
                     "type": "number",
                     "markdownDescription": "%se.background.editor.opacity%",
-                    "default": 0.1
+                    "default": 0.1,
+                    "order": 13
                 },
                 "se.background.panel.imgUrl": {
                     "type": "string",
                     "markdownDescription": "%se.background.panel.imgUrl%",
-                    "default": ""
+                    "default": "",
+                    "order": 14
                 },
                 "se.background.panel.opacity": {
                     "type": "number",
                     "markdownDescription": "%se.background.panel.opacity%",
-                    "default": 0.1
+                    "default": 0.1,
+                    "order": 15
                 },
                 "se.background.auxiliarybar.imgUrl": {
                     "type": "string",
                     "markdownDescription": "%se.background.auxiliarybar.imgUrl%",
-                    "default": ""
+                    "default": "",
+                    "order": 16
                 },
                 "se.background.auxiliarybar.opacity": {
                     "type": "number",
                     "markdownDescription": "%se.background.auxiliarybar.opacity%",
-                    "default": 0.1
+                    "default": 0.1,
+                    "order": 17
                 },
                 "se.background.statusbar.imgUrl": {
                     "type": "string",
                     "markdownDescription": "%se.background.statusbar.imgUrl%",
-                    "default": ""
+                    "default": "",
+                    "order": 18
                 },
                 "se.background.statusbar.opacity": {
                     "type": "number",
                     "markdownDescription": "%se.background.statusbar.opacity%",
-                    "default": 0.1
+                    "default": 0.1,
+                    "order": 19
                 }
             }
         }

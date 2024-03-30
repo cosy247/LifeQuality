@@ -1,9 +1,9 @@
-# Change Log
+# 0.0.1
 
-All notable changes to the "Background" extension will be documented in this file.
+- 发布
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+# 0.0.2
 
-## [Unreleased]
+- 优化 README 文档
 
-- Initial release
+- 在取消激活插件时清理背景
