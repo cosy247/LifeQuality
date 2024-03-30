@@ -74,7 +74,4 @@ module.exports = {
     context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(replaceStyle));
     replaceStyle();
   },
-  deactivate() {
-    clearStyle();
-  },
 };
