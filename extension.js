@@ -2,16 +2,16 @@ const vscode = require('vscode');
 const path = require('path');
 const fs = require('fs');
 
-const styleStartLabel = 'LifeQuality-background-start';
-const styleEndLabel = 'LifeQuality-background-end';
-const styleRegExp = new RegExp(`/\\* ${styleStartLabel} \\*/[\\s\\S]*/\\* ${styleEndLabel} \\*/`, 'g');
+const backgroundFileName = `workbench.${vscode.env.appHost}.background.css`;
+const importStyleString = `@import url("./${backgroundFileName}");`;
 const partNames = ['titlebar', 'banner', 'activitybar', 'sidebar', 'editor', 'panel', 'auxiliarybar', 'statusbar'];
 const styleFilePath = path.join(path.dirname(require.main.filename), 'vs', 'workbench', `workbench.${vscode.env.appHost}.main.css`);
+const backgroundFilePath = path.join(path.dirname(require.main.filename), 'vs', 'workbench', backgroundFileName);
 
 function getBackgroundStyle() {
   const config = vscode.workspace.getConfiguration('se').get('background');
   if (config.showType == 'fullScreen') {
-    return `/* ${styleStartLabel} */
+    return `
       body::after {
         content: '';
         position: fixed;
@@ -25,13 +25,14 @@ function getBackgroundStyle() {
         pointer-events: none;
         z-index: 999;
       }
-    /* ${styleEndLabel} */`.replace(/\s+/g, ' ');
+    `;
   } else if (config.showType == 'partition') {
-    const partitionStyle = partNames.reduce((partitionStyle, partName) => {
-      return (
+    return partNames.reduce(
+      (partitionStyle, partName) =>
         partitionStyle +
         (config[partName].imgUrl
-          ? `[id='workbench.parts.${partName}']::after {
+          ? `
+            [id='workbench.parts.${partName}']::after {
               content: '';
               position: absolute;
               top: 0;
@@ -43,13 +44,11 @@ function getBackgroundStyle() {
               opacity: ${config[partName].opacity};
               pointer-events: none;
               z-index: 999;
-            }`
-          : '')
-      );
-    }, '');
-    return `/* ${styleStartLabel} */
-      ${partitionStyle}
-    /* ${styleEndLabel} */`.replace(/\s+/g, ' ');
+            }
+          `
+          : ''),
+      ''
+    );
   } else {
     return '';
   }
@@ -57,15 +56,10 @@ function getBackgroundStyle() {
 
 function replaceStyle() {
   fs.readFile(styleFilePath, { encoding: 'utf8' }, (_, data) => {
-    const newStyleData = data.replace(styleRegExp, '') + getBackgroundStyle();
-    fs.writeFile(styleFilePath, newStyleData, { encoding: 'utf8' }, () => {});
-  });
-}
-
-function clearStyle() {
-  fs.readFile(styleFilePath, 'utf8').then((_, data) => {
-    const newStyleData = data.replace(styleRegExp, '');
-    fs.writeFile(styleFilePath, newStyleData, { encoding: 'utf8' }, () => {});
+    if (!data.startsWith(importStyleString)) {
+      fs.writeFile(styleFilePath, importStyleString + data, { encoding: 'utf8' }, () => {});
+    }
+    fs.writeFile(backgroundFilePath, getBackgroundStyle().replace(/[\r\n\s]+/g, ' '), { encoding: 'utf8' }, () => {});
   });
 }
 
