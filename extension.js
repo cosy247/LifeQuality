@@ -2,70 +2,60 @@ const vscode = require('vscode');
 const path = require('path');
 const fs = require('fs');
 
-const backgroundFileName = `workbench.${vscode.env.appHost}.background.css`;
-const importStyleString = `@import url("./${backgroundFileName}");`;
-const partNames = ['titlebar', 'banner', 'activitybar', 'sidebar', 'editor', 'panel', 'auxiliarybar', 'statusbar'];
-const styleFilePath = path.join(path.dirname(require.main.filename), 'vs', 'workbench', `workbench.${vscode.env.appHost}.main.css`);
-const backgroundFilePath = path.join(path.dirname(require.main.filename), 'vs', 'workbench', backgroundFileName);
+const CONFIG_HEAD = 'se';
+const COMMAND_ID = 'changeBackground';
 
-function getBackgroundStyle() {
-  const config = vscode.workspace.getConfiguration('se').get('background');
-  if (config.showType == 'fullScreen') {
-    return `
-      body::after {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        display: block;
-        width: 100%;
-        height: 100%;
-        background: url(${config.fullScreen.imgUrl}) 50% 50%/cover;
-        opacity: ${config.fullScreen.opacity};
-        pointer-events: none;
-        z-index: 999;
-      }
-    `;
-  } else if (config.showType == 'partition') {
-    return partNames.reduce(
-      (partitionStyle, partName) =>
-        partitionStyle +
-        (config[partName].imgUrl
-          ? `
-            [id='workbench.parts.${partName}']::after {
-              content: '';
-              position: absolute;
-              top: 0;
-              left: 0;
-              display: block;
-              width: 100%;
-              height: 100%;
-              background: url(${config[partName].imgUrl}) 50% 50%/cover;
-              opacity: ${config[partName].opacity};
-              pointer-events: none;
-              z-index: 999;
-            }
-          `
-          : ''),
-      ''
-    );
-  } else {
-    return '';
-  }
-}
+const getWebViewContent = (context, templatePath) => {
+    const resourcePath = path.join(context.extensionPath, templatePath);
+    const dirPath = path.dirname(resourcePath);
+    let html = fs.readFileSync(resourcePath, 'utf-8');
+    html = html.replace(/(<link.+?href="|<script.+?src="|<img.+?src=")(.+?)"/g, (m, $1, $2) => {
+        return $1 + vscode.Uri.file(path.resolve(dirPath, $2)).with({ scheme: 'vscode-resource' }).toString() + '"';
+    });
+    return html;
+};
 
-function replaceStyle() {
-  fs.readFile(styleFilePath, { encoding: 'utf8' }, (_, data) => {
-    if (!data.startsWith(importStyleString)) {
-      fs.writeFile(styleFilePath, importStyleString + data, { encoding: 'utf8' }, () => {});
-    }
-    fs.writeFile(backgroundFilePath, getBackgroundStyle().replace(/[\r\n\s]+/g, ' '), { encoding: 'utf8' }, () => {});
-  });
-}
+const changeConfiguration = (path, value, isGlobal) => {
+    vscode.workspace.getConfiguration(CONFIG_HEAD).update(path, value, isGlobal);
+};
+
+const createSettingPanel = (context) => {
+    settingPanel = vscode.window.createWebviewPanel('settingPanel', 'VsBackground', vscode.ViewColumn.One, {
+        enableScripts: true,
+    });
+    settingPanel.iconPath = vscode.Uri.joinPath(context.extensionUri, 'icon.ico');
+    settingPanel.webview.html = getWebViewContent(context, 'frontend/index.html');
+    settingPanel.webview.postMessage({
+        config: vscode.workspace.getConfiguration(CONFIG_HEAD),
+        from: 'VsBackground',
+    });
+    settingPanel.webview.onDidReceiveMessage((message) => {
+        console.log('onDidReceiveMessage', message);
+    });
+    vscode.workspace.onDidChangeConfiguration(() => {
+        settingPanel.webview.postMessage({
+            config: vscode.workspace.getConfiguration(CONFIG_HEAD),
+            from: 'VsBackground',
+        });
+    });
+    return settingPanel;
+};
 
 module.exports = {
-  activate(context) {
-    context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(replaceStyle));
-    replaceStyle();
-  },
+    activate(context) {
+        // vscode.window.showInformationMessage(COMMAND_ID);
+        let settingPanel = null;
+        context.subscriptions.push(
+            vscode.commands.registerCommand(COMMAND_ID, () => {
+                console.log(vscode.workspace.getConfiguration(CONFIG_HEAD, 'resource'));
+                console.log(vscode.workspace.getConfiguration(CONFIG_HEAD, vscode.workspace.workspaceFile.Uri));
+                console.log(vscode.workspace.getConfiguration(CONFIG_HEAD));
+                if (!settingPanel) {
+                    settingPanel = createSettingPanel(context);
+                } else {
+                    settingPanel.reveal();
+                }
+            })
+        );
+    },
 };
