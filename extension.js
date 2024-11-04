@@ -44,18 +44,26 @@ const createSettingPanel = (context) => {
 module.exports = {
     activate(context) {
         // vscode.window.showInformationMessage(COMMAND_ID);
+
+        // settingPanel
         let settingPanel = null;
         context.subscriptions.push(
             vscode.commands.registerCommand(COMMAND_ID, () => {
-                console.log(vscode.workspace.getConfiguration(CONFIG_HEAD, 'resource'));
-                console.log(vscode.workspace.getConfiguration(CONFIG_HEAD, vscode.workspace.workspaceFile.Uri));
-                console.log(vscode.workspace.getConfiguration(CONFIG_HEAD));
                 if (!settingPanel) {
                     settingPanel = createSettingPanel(context);
+                    settingPanel.onDidDispose(() => (settingPanel = null));
                 } else {
                     settingPanel.reveal();
                 }
             })
         );
+
+        // statusBar
+        const statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, -Infinity);
+        statusBar.command = COMMAND_ID;
+        statusBar.text = '❤️';
+        statusBar.tooltip = '打开背景设置页面';
+        context.subscriptions.push(statusBar);
+        statusBar.show();
     },
 };

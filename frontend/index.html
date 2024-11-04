@@ -1,11 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
-</head>
-<body>
-	<h1>VsBackground</h1>
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            body {
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+                background: linear-gradient(34deg, #8a7, #77a, #958) 50% / cover no-repeat;
+            }
+            .main {
+                position: relative;
+                margin: auto;
+                width: 90vmin;
+                height: 60vmin;
+                border: 1px solid #fff;
+                border-radius: 5px;
+                color: #fff;
+            }
+            .main:hover {
+                color: #fff8;
+            }
+            .main > div {
+                position: absolute;
+                top: var(--pt);
+                right: var(--pr);
+                bottom: var(--pb);
+                left: var(--pl);
+                border: 1px solid #fff;
+                box-sizing: border-box;
+                border-radius: 5px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.5vmin;
+                font-weight: 900;
+                user-select: none;
+                cursor: pointer;
+            }
+            .main > div:hover {
+                transition: 0.5s;
+                color: #fff;
+                background: #fff3;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="main" class="main">
+            <div data-area="titlebar" style="--pt: 0; --pr: 0; --pb: 95%; --pl: 0">标题栏</div>
+            <!-- <div data-area="banner" style="--pt: 20%; --pr: 2; --pb: 2; --pl: 3">banner</div> -->
+            <div data-area="activitybar" style="--pt: 5%; --pr: 95%; --pb: 5%; --pl: 0">
+                活
+                <br />
+                动
+                <br />
+                栏
+            </div>
+            <div data-area="sidebar" style="--pt: 5%; --pr: 75%; --pb: 5%; --pl: 5%">主侧边栏</div>
+            <div data-area="editor" style="--pt: 5%; --pr: 15%; --pb: 30%; --pl: 25%">编辑器</div>
+            <div data-area="panel" style="--pt: 70%; --pr: 15%; --pb: 5%; --pl: 25%">面板</div>
+            <div data-area="auxiliarybar" style="--pt: 5%; --pr: 0%; --pb: 5%; --pl: 85%">辅助侧边栏</div>
+            <div data-area="statusbar" style="--pt: 95%; --pr: 0; --pb: 0; --pl: 0">状态栏</div>
+        </div>
+        <div class="settings">
+            <div class="setting-main"></div>
+        </div>
+    </body>
+
+    <script>
+        const areaMap = {
+            titlebar: '标题栏',
+            banner: '',
+            activitybar: '活动栏',
+            sidebar: '主侧边栏',
+            editor: '编辑器',
+            panel: '面板',
+            auxiliarybar: '辅助侧边栏',
+            statusbar: '状态栏',
+        };
+
+        document.querySelector('#main').addEventListener('click', (event) => {
+            const area = event.target.dataset.area;
+            document.querySelector('#settingArea').innerHTML = areaMap[area]
+        });
+    </script>
 </html>
