@@ -41,21 +41,42 @@ const createSettingPanel = (context) => {
     return settingPanel;
 };
 
+
+const base = (() => {
+    const mainFilename = require.main?.filename;
+    const vscodeInstallPath = vscode?.env.appRoot;
+    const base = mainFilename?.length ? path.dirname(mainFilename) : path.join(vscodeInstallPath, 'out');
+    return base;
+})();
+
+const cssPath = (() => {
+    if (vscode.env.appHost === 'desktop') {
+        return path.join(base, 'vs', 'workbench', 'workbench.desktop.main.css');
+    } 
+    return path.join(base, 'vs', 'workbench', 'workbench.web.main.css');
+})();
+
+
 module.exports = {
     activate(context) {
         // vscode.window.showInformationMessage(COMMAND_ID);
         let settingPanel = null;
         context.subscriptions.push(
             vscode.commands.registerCommand(COMMAND_ID, () => {
-                console.log(vscode.workspace.getConfiguration(CONFIG_HEAD, 'resource'));
-                console.log(vscode.workspace.getConfiguration(CONFIG_HEAD, vscode.workspace.workspaceFile.Uri));
-                console.log(vscode.workspace.getConfiguration(CONFIG_HEAD));
                 if (!settingPanel) {
                     settingPanel = createSettingPanel(context);
-                } else {
-                    settingPanel.reveal();
-                }
+                    settingPanel.onDidDispose(() => (settingPanel = null));
+                } else {settingPanel.reveal();}
             })
         );
+
+        // vscode.commands.executeCommand('workbench.action.reloadWindow');
+        // 
+        const statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, -Infinity);
+        statusBar.text = '❤️';
+        statusBar.tooltip = '打开背景设置页面'
+        statusBar.command = COMMAND_ID;
+        context.subscriptions.push(statusBar);
+        statusBar.show();
     },
 };
