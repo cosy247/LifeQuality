@@ -60,22 +60,25 @@ const cssPath = (() => {
 module.exports = {
     activate(context) {
         // vscode.window.showInformationMessage(COMMAND_ID);
+
+        // settingPanel
         let settingPanel = null;
         context.subscriptions.push(
             vscode.commands.registerCommand(COMMAND_ID, () => {
                 if (!settingPanel) {
                     settingPanel = createSettingPanel(context);
                     settingPanel.onDidDispose(() => (settingPanel = null));
-                } else {settingPanel.reveal();}
+                } else {
+                    settingPanel.reveal();
+                }
             })
         );
 
-        // vscode.commands.executeCommand('workbench.action.reloadWindow');
-        // 
+        // statusBar
         const statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, -Infinity);
-        statusBar.text = '❤️';
-        statusBar.tooltip = '打开背景设置页面'
         statusBar.command = COMMAND_ID;
+        statusBar.text = '❤️';
+        statusBar.tooltip = '打开背景设置页面';
         context.subscriptions.push(statusBar);
         statusBar.show();
     },
