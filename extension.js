@@ -1,8 +1,9 @@
 const vscode = require('vscode');
 const path = require('path');
 const fs = require('fs');
+const readline = require('readline');
 
-const CONFIG_HEAD = 'se';
+const CONFIG_HEAD = 'vsbackground';
 const COMMAND_ID = 'changeBackground';
 
 const getWebViewContent = (context, templatePath) => {
@@ -15,32 +16,29 @@ const getWebViewContent = (context, templatePath) => {
     return html;
 };
 
-const changeConfiguration = (path, value, isGlobal) => {
-    vscode.workspace.getConfiguration(CONFIG_HEAD).update(path, value, isGlobal);
-};
-
 const createSettingPanel = (context) => {
     settingPanel = vscode.window.createWebviewPanel('settingPanel', 'VsBackground', vscode.ViewColumn.One, {
         enableScripts: true,
+        retainContextWhenHidden: true,
     });
     settingPanel.iconPath = vscode.Uri.joinPath(context.extensionUri, 'icon.ico');
     settingPanel.webview.html = getWebViewContent(context, 'frontend/index.html');
     settingPanel.webview.postMessage({
-        config: vscode.workspace.getConfiguration(CONFIG_HEAD),
-        from: 'VsBackground',
+        data: {
+            globalConfig: vscode.workspace.getConfiguration(CONFIG_HEAD, vscode.ConfigurationTarget.Global),
+            workspaceConfig: vscode.workspace.getConfiguration(CONFIG_HEAD, vscode.ConfigurationTarget.Workspace),
+        },
+        type: 'config',
     });
-    settingPanel.webview.onDidReceiveMessage((message) => {
-        console.log('onDidReceiveMessage', message);
-    });
-    vscode.workspace.onDidChangeConfiguration(() => {
-        settingPanel.webview.postMessage({
-            config: vscode.workspace.getConfiguration(CONFIG_HEAD),
-            from: 'VsBackground',
-        });
+    settingPanel.webview.onDidReceiveMessage(({ command, data }) => {
+        if (command === 'saveWorkspaceConfig') {
+            vscode.workspace.getConfiguration().update(CONFIG_HEAD, data, vscode.ConfigurationTarget.Workspace);
+        } else if (command === 'saveGlobalConfig') {
+            vscode.workspace.getConfiguration().update(CONFIG_HEAD, data, vscode.ConfigurationTarget.Global);
+        }
     });
     return settingPanel;
 };
-
 
 const base = (() => {
     const mainFilename = require.main?.filename;
@@ -49,18 +47,16 @@ const base = (() => {
     return base;
 })();
 
-const cssPath = (() => {
+const jsPath = (() => {
     if (vscode.env.appHost === 'desktop') {
-        return path.join(base, 'vs', 'workbench', 'workbench.desktop.main.css');
-    } 
-    return path.join(base, 'vs', 'workbench', 'workbench.web.main.css');
+        return path.join(base, 'vs', 'workbench', 'workbench.desktop.main.js');
+    }
+    return path.join(base, 'vs', 'workbench', 'workbench.web.main.js');
 })();
-
 
 module.exports = {
     activate(context) {
         // vscode.window.showInformationMessage(COMMAND_ID);
-
         // settingPanel
         let settingPanel = null;
         context.subscriptions.push(
@@ -81,5 +77,25 @@ module.exports = {
         statusBar.tooltip = '打开背景设置页面';
         context.subscriptions.push(statusBar);
         statusBar.show();
+
+        // onDidChangeConfiguration
+        vscode.workspace.onDidChangeConfiguration(() => {
+            const fileStream = fs.createReadStream(filePath);
+            readline
+                .createInterface({
+                    input: fileStream,
+                    crlfDelay: Infinity, // 识别Windows风格的行结束符\r\n
+                })
+                .on('line', (line) => {
+                    // 在这里处理每行数据
+                    console.log(line);
+                    // 可以根据需要对line进行解析或进一步处理
+                });
+
+            // settingPanel.webview.postMessage({
+            //     data: settingConfig,
+            //     type: 'config',
+            // });
+        });
     },
 };

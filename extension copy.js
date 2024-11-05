@@ -15,7 +15,7 @@ const backgroundFilePath = path.join(path.dirname(require.main.filename), 'vs', 
 
 function getBackgroundStyle() {
   const config = vscode.workspace.getConfiguration('se').get('background');
-  if (config.showType == 'fullScreen') {
+  if (config.showType == 'full') {
     return `
       body::after {
         content: '';
@@ -25,8 +25,8 @@ function getBackgroundStyle() {
         display: block;
         width: 100%;
         height: 100%;
-        background: url(${config.fullScreen.imgUrl}) 50% 50%/cover;
-        opacity: ${config.fullScreen.opacity};
+        background: url(${config.full.img}) 50% 50%/cover;
+        opacity: ${config.full.opacity};
         pointer-events: none;
         z-index: 999;
       }
@@ -35,7 +35,7 @@ function getBackgroundStyle() {
     return partNames.reduce(
       (partitionStyle, partName) =>
         partitionStyle +
-        (config[partName].imgUrl
+        (config[partName].img
           ? `
             [id='workbench.parts.${partName}']::after {
               content: '';
@@ -45,7 +45,7 @@ function getBackgroundStyle() {
               display: block;
               width: 100%;
               height: 100%;
-              background: url(${config[partName].imgUrl}) 50% 50%/cover;
+              background: url(${config[partName].img}) 50% 50%/cover;
               opacity: ${config[partName].opacity};
               pointer-events: none;
               z-index: 999;

@@ -18,7 +18,7 @@
 
 ## 定义全屏背景图片
 
-开启背景图片功能，选中 `fullScreen` 模式
+开启背景图片功能，选中 `full` 模式
 
 ![fullScreen1](readmeImgs/image4.png)
 
