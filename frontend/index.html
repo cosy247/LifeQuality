@@ -4,92 +4,160 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Document</title>
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-            }
-            body {
-                height: 100vh;
-                display: flex;
-                flex-direction: column;
-                background: linear-gradient(34deg, #8a7, #77a, #958) 50% / cover no-repeat;
-            }
-            .main {
-                position: relative;
-                margin: auto;
-                width: 90vmin;
-                height: 60vmin;
-                border: 1px solid #fff;
-                border-radius: 5px;
-                color: #fff;
-            }
-            .main:hover {
-                color: #fff8;
-            }
-            .main > div {
-                position: absolute;
-                top: var(--pt);
-                right: var(--pr);
-                bottom: var(--pb);
-                left: var(--pl);
-                border: 1px solid #fff;
-                box-sizing: border-box;
-                border-radius: 5px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 1.5vmin;
-                font-weight: 900;
-                user-select: none;
-                cursor: pointer;
-            }
-            .main > div:hover {
-                transition: 0.5s;
-                color: #fff;
-                background: #fff3;
-            }
-        </style>
+        <link rel="stylesheet" href="./index.css" />
+        <script src="./vue.min.js"></script>
     </head>
 
     <body>
-        <div id="main" class="main">
-            <div data-area="titlebar" style="--pt: 0; --pr: 0; --pb: 95%; --pl: 0">标题栏</div>
-            <!-- <div data-area="banner" style="--pt: 20%; --pr: 2; --pb: 2; --pl: 3">banner</div> -->
-            <div data-area="activitybar" style="--pt: 5%; --pr: 95%; --pb: 5%; --pl: 0">
-                活
-                <br />
-                动
-                <br />
-                栏
+        <div id="app" v-clock>
+            <div class="headConfigs">
+                <div class="config-item">
+                    <label for="setFull">
+                        <input type="radio" id="setFull" value="full" v-model="config.showType" />
+                        全屏配置
+                    </label>
+                    <label for="setPartition">
+                        <input type="radio" id="setPartition" value="partition" v-model="config.showType" />
+                        模块配置
+                    </label>
+                </div>
+                <div class="config-item">
+                    <label for="setGlobal">
+                        <input type="radio" id="setGlobal" value="global" v-model="currentConfigTarget" />
+                        全局
+                    </label>
+                    <label for="setWorspace">
+                        <input type="radio" id="setWorspace" value="workspace" v-model="currentConfigTarget" />
+                        工作区
+                    </label>
+                </div>
+                <div class="config-item">
+                    <button @click="clearConfit">清空</button>
+                    <button @click="saveConfig">保存</button>
+                </div>
             </div>
-            <div data-area="sidebar" style="--pt: 5%; --pr: 75%; --pb: 5%; --pl: 5%">主侧边栏</div>
-            <div data-area="editor" style="--pt: 5%; --pr: 15%; --pb: 30%; --pl: 25%">编辑器</div>
-            <div data-area="panel" style="--pt: 70%; --pr: 15%; --pb: 5%; --pl: 25%">面板</div>
-            <div data-area="auxiliarybar" style="--pt: 5%; --pr: 0%; --pb: 5%; --pl: 85%">辅助侧边栏</div>
-            <div data-area="statusbar" style="--pt: 95%; --pr: 0; --pb: 0; --pl: 0">状态栏</div>
-        </div>
-        <div class="settings">
-            <div class="setting-main"></div>
+            <div class="main">
+                <div
+                    class="fullPart"
+                    :class="config.showType === 'full' ? 'activeFull' : 'hidden'"
+                    :style="{'--background': `url(${config.full.img}) 50% 50%/cover`, '--opacity': config.full.opacity}">
+                    全屏
+                </div>
+                <div
+                    v-for="part in areaMap"
+                    :class="{active: part.key == currentConfigkey}"
+                    @click="changeSetTarget(part)"
+                    :style="getStyle(part)">
+                    {{part.name}}
+                </div>
+            </div>
+            <div class="configs">
+                <div class="config-item">
+                    <span>背景图片地址:</span>
+                    <input type="text" style="width: 30vmin" v-model="config[currentConfigkey].img" />
+                    <span>背景透明度(0-1):</span>
+                    <input type="text" style="width: 10vmin" v-model="config[currentConfigkey].opacity" />
+                </div>
+            </div>
         </div>
     </body>
 
     <script>
-        const areaMap = {
-            titlebar: '标题栏',
-            banner: '',
-            activitybar: '活动栏',
-            sidebar: '主侧边栏',
-            editor: '编辑器',
-            panel: '面板',
-            auxiliarybar: '辅助侧边栏',
-            statusbar: '状态栏',
-        };
-
-        document.querySelector('#main').addEventListener('click', (event) => {
-            const area = event.target.dataset.area;
-            document.querySelector('#settingArea').innerHTML = areaMap[area]
+        window.addEventListener('message', ({ data: { type, data } }) => {
+            const vscode = acquireVsCodeApi();
+            new Vue({
+                el: '#app',
+                data: () => ({
+                    areaMap: [
+                        { key: 'titlebar', name: '标题栏', position: [0, 0, 95, 0] },
+                        // { key: 'banner', name: '', position: [0, 0, 0, 0] },
+                        { key: 'activitybar', name: '活动栏', position: [5, 95, 5, 0] },
+                        { key: 'sidebar', name: '主侧边栏', position: [5, 75, 5, 5] },
+                        { key: 'editor', name: '编辑器', position: [5, 15, 30, 25] },
+                        { key: 'panel', name: '面板', position: [70, 15, 5, 25] },
+                        { key: 'auxiliarybar', name: '辅助侧边栏', position: [5, 0, 5, 85] },
+                        { key: 'statusbar', name: '状态栏', position: [95, 0, 0, 0] },
+                    ],
+                    globalConfig: {},
+                    workspaceConfig: {},
+                    currentConfigTarget: 'global',
+                    config: {
+                        showType: 'partition',
+                        full: { img: '', opacity: 0.95 },
+                        titlebar: { img: '', opacity: 0.95 },
+                        banner: { img: '', opacity: 0.15 },
+                        activitybar: { img: '', opacity: 0.95 },
+                        sidebar: { img: '', opacity: 0.95 },
+                        editor: { img: '', opacity: 0.95 },
+                        panel: { img: '', opacity: 0.95 },
+                        auxiliarybar: { img: '', opacity: 0.95 },
+                        statusbar: { img: '', opacity: 0.15 },
+                    },
+                    currentConfigkey: 'full',
+                }),
+                watch: {
+                    'config.showType'(value) {
+                        if (value === 'full') {
+                            this.currentConfigkey = 'full';
+                        } else {
+                            this.currentConfigkey = 'editor';
+                        }
+                    },
+                    currentConfigTarget(value) {
+                        if (value === 'global') {
+                            this.config = this.globalConfig;
+                        } else if (value === 'workspace') {
+                            this.config = this.workspaceConfig;
+                        }
+                    },
+                },
+                methods: {
+                    getStyle(part) {
+                        const [top, right, botton, left] = part.position;
+                        const config = this.config[part.key];
+                        return {
+                            top: `${top}%`,
+                            right: `${right}%`,
+                            bottom: `${botton}%`,
+                            left: `${left}%`,
+                            '--background': `url(${config.img}) 50% 50%/cover`,
+                            '--opacity': config.opacity,
+                        };
+                    },
+                    changeSetTarget(part) {
+                        this.currentConfigkey = part.key;
+                    },
+                    clearConfit() {
+                        this.config.full.img = '';
+                        this.areaMap.forEach(({ key }) => {
+                            this.config[key].img = '';
+                        });
+                    },
+                    saveConfig() {
+                        const message = { data: this.config };
+                        if (this.currentConfigTarget === 'global') {
+                            message.command = 'saveGlobalConfig';
+                        } else if (this.currentConfigTarget === 'workspace') {
+                            message.command = 'saveWorkspaceConfig';
+                        }
+                        vscode.postMessage(message);
+                    },
+                },
+                created() {
+                    console.log(type, data);
+                    if (type === 'config') {
+                        this.globalConfig = data.globalConfig;
+                        this.workspaceConfig = data.workspaceConfig;
+                        this.config = data.globalConfig;
+                        if (this.config.showType === 'full') {
+                            this.currentConfigkey = 'full';
+                        } else {
+                            this.config.showType = 'partition';
+                            this.currentConfigkey = 'editor';
+                        }
+                    }
+                },
+            });
         });
     </script>
 </html>
-I

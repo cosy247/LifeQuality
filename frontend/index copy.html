@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            body {
+                height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                background: linear-gradient(34deg, #8a7, #77a, #958) 50% / cover no-repeat;
+            }
+            button {
+                width: fit-content;
+                background: #0078d4;
+                padding: 12px 20px;
+                line-height: 0px;
+                border-radius: 4px;
+                cursor: pointer;
+                color: #fff;
+                outline: none;
+                border: none;
+                font-size: 1.6vmin;
+            }
+            button:hover {
+                background: #088aed;
+            }
+            .hidden {
+                opacity: 0;
+                pointer-events: none;
+            }
+            .main {
+                position: relative;
+                width: 90vmin;
+                height: 60vmin;
+                border: 1px solid #fff;
+                border-radius: 5px;
+            }
+            .main > div {
+                position: absolute;
+                top: var(--pt);
+                right: var(--pr);
+                bottom: var(--pb);
+                left: var(--pl);
+                border: 1px solid #fff;
+                box-sizing: border-box;
+                border-radius: 5px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.5vmin;
+                font-weight: 900;
+                user-select: none;
+                cursor: pointer;
+                color: #fff;
+                transition: 0.5s;
+            }
+            .main > div:hover {
+                background: #fff3;
+            }
+            .main > div.active {
+                color: #333;
+                font-size: 2vmin;
+                background: #fff5;
+            }
+            .headSettings {
+                width: 85vmin;
+                margin: 1.2vmin;
+                color: white;
+                display: flex;
+                justify-content: space-between;
+            }
+            .settings {
+                margin: 1.2vmin;
+                color: white;
+            }
+            .setting-item {
+                display: flex;
+                align-items: center;
+                font-weight: 900;
+                font-size: 2vmin;
+                gap: 1vmin;
+            }
+            .setting-item input[type='text'] {
+                width: fit-content;
+                padding: 2px 10px;
+                outline: none;
+                border: none;
+                border-radius: 2px;
+            }
+            .setting-item input[type='radio'] {
+                position: relative;
+                top: 2px;
+            }
+            .main > div.activeFull {
+                opacity: 1;
+                color: #333;
+                font-size: 5vmin;
+                background: #fff5;
+                z-index: 9;
+            }
+            .main > div.activeFull ~ div {
+                pointer-events: none;
+                opacity: 0;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="headSettings">
+            <div class="setting-item">
+                <label for="setFull">
+                    <input id="setFull" type="radio" name="mode" oninput="handModeChange('full')" />
+                    全屏配置
+                </label>
+                <label for="setPartition">
+                    <input id="setPartition" type="radio" name="mode" oninput="handModeChange('partition')" />
+                    模块配置
+                </label>
+            </div>
+            <div class="setting-item">
+                <button>清空</button>
+                <button>还原</button>
+                <button onclick="handSaveConfig(event)">保存</button>
+            </div>
+        </div>
+        <div class="main" onclick="handPartClick(event)">
+            <div id="fullPart" class="hidden" data-area="full" style="--pt: 0; --pr: 0; --pb: 0; --pl: 0">全屏</div>
+            <div id="titlebarPart" data-area="titlebar" style="--pt: 0; --pr: 0; --pb: 95%; --pl: 0">标题栏</div>
+            <!-- <div data-area="banner" style="--pt: 20%; --pr: 2; --pb: 2; --pl: 3">banner</div> -->
+            <div id="activitybarPart" data-area="activitybar" style="--pt: 5%; --pr: 95%; --pb: 5%; --pl: 0">
+                活
+                <br />
+                动
+                <br />
+                栏
+            </div>
+            <div id="sidebarPart" data-area="sidebar" style="--pt: 5%; --pr: 75%; --pb: 5%; --pl: 5%">主侧边栏</div>
+            <div id="editorPart" data-area="editor" style="--pt: 5%; --pr: 15%; --pb: 30%; --pl: 25%">编辑器</div>
+            <div id="panelPart" data-area="panel" style="--pt: 70%; --pr: 15%; --pb: 5%; --pl: 25%">面板</div>
+            <div id="auxiliarybarPart" data-area="auxiliarybar" style="--pt: 5%; --pr: 0%; --pb: 5%; --pl: 85%">
+                辅助侧边栏
+            </div>
+            <div id="statusbarPart" data-area="statusbar" style="--pt: 95%; --pr: 0; --pb: 0; --pl: 0">状态栏</div>
+        </div>
+        <div class="settings">
+            <div class="setting-item">
+                <span>背景图片地址:</span>
+                <input id="backgroundUrl" type="text" style="width: 30vmin" onblur="handBackgroundUrlChange(event)" />
+                <span>背景透明度(0-1):</span>
+                <input
+                    id="backgroundOpacity"
+                    type="text"
+                    style="width: 10vmin"
+                    onblur="handBackgroundOpacityChange(event)" />
+            </div>
+        </div>
+    </body>
+
+    <script>
+        const vscode = acquireVsCodeApi();
+
+        const areaMap = {
+            titlebar: '标题栏',
+            banner: '',
+            activitybar: '活动栏',
+            sidebar: '主侧边栏',
+            editor: '编辑器',
+            panel: '面板',
+            auxiliarybar: '辅助侧边栏',
+            statusbar: '状态栏',
+        };
+
+        const settting = {
+            showType: 'partition',
+            full: { img: '', opacity: 0.95 },
+            titlebar: { img: '', opacity: 0.95 },
+            banner: { img: '', opacity: 0.95 },
+            activitybar: { img: '', opacity: 0.95 },
+            sidebar: { img: '', opacity: 0.95 },
+            editor: { img: '', opacity: 0.95 },
+            panel: { img: '', opacity: 0.95 },
+            auxiliarybar: { img: '', opacity: 0.95 },
+            statusbar: { img: '', opacity: 0.95 },
+        };
+
+        const partDoms = {
+            full: document.querySelector('#fullPart'),
+            titlebar: document.querySelector('#titlebarPart'),
+            banner: document.querySelector('#bannerPart'),
+            activitybar: document.querySelector('#activitybarPart'),
+            sidebar: document.querySelector('#sidebarPart'),
+            editor: document.querySelector('#editorPart'),
+            panel: document.querySelector('#panelPart'),
+            auxiliarybar: document.querySelector('#auxiliarybarPart'),
+            statusbar: document.querySelector('#statusbarPart'),
+        };
+
+        const setDoms = {
+            setFull: document.querySelector('#setFull'),
+            setPartition: document.querySelector('#setPartition'),
+            backgroundUrl: document.querySelector('#backgroundUrl'),
+            backgroundOpacity: document.querySelector('#backgroundOpacity'),
+        };
+
+        let settingName = '';
+        let lastActiveArea = null;
+
+        function handPartClick(event) {
+            const target = event.target;
+            if (target.dataset.area) {
+                changeSetTarget(target.dataset.area);
+                target.classList.add('active');
+                lastActiveArea && lastActiveArea.classList.remove('active');
+                lastActiveArea = target;
+            }
+        }
+
+        function changeSetTarget(name) {
+            settingName = name;
+            if (settting[settingName]) {
+                setDoms.backgroundUrl.value = settting[settingName].img;
+                setDoms.backgroundOpacity.value = settting[settingName].opacity;
+            }
+        }
+
+        function handBackgroundUrlChange(event) {
+            settting[settingName].img = event.target.value;
+        }
+
+        function handBackgroundOpacityChange(event) {
+            let opacity = parseFloat(event.target.value);
+            if (isNaN(opacity) || opacity > 1) opacity = 1;
+            else if (opacity < 0) opacity = 0;
+            settting[settingName].opacity = isNaN(opacity) ? 1 : opacity;
+            event.target.value = settting[settingName].opacity;
+        }
+
+        function handModeChange(mode) {
+            settting.showType = mode;
+            if (mode === 'full') {
+                partDoms.full.classList.add('activeFull');
+                changeSetTarget('full');
+            } else {
+                partDoms.full.classList.remove('activeFull');
+                changeSetTarget('');
+            }
+        }
+
+        function handSaveConfig() {
+            vscode.postMessage({
+                command: 'setConfig',
+                data: settting,
+            });
+        }
+
+        window.addEventListener('message', ({ data: { type, data } }) => {
+            if (type === 'config') {
+                Object.assign(settting, data);
+                if (settting.showType === 'full') {
+                    setDoms.setFull.checked = true;
+                } else if (settting.showType === 'partition') {
+                    setDoms.setPartition.checked = true;
+                }
+                handModeChange(settting.showType);
+            }
+        });
+    </script>
+</html>
