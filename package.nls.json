@@ -1,26 +1,3 @@
 {
-  "vsbackground.description": "Define a background image for each area.",
-  "vsbackground.isOpened": "Enable image background",
-  "vsbackground.showType": "Background image display area mode",
-  "vsbackground.showType.none": "Do not display background image",
-  "vsbackground.showType.full": "Display background image in full screen",
-  "vsbackground.showType.partition": "Display separately for each area",
-  "vsbackground.full.img": "Full-screen background image URL, effective when the display area is set to full-screen mode",
-  "vsbackground.full.opacity": "Full-screen background image opacity, ranging from fully transparent 0 to opaque 1, recommended 0.1",
-  "vsbackground.titlebar.img": "Menu bar background image URL, effective when the display area is set to area mode",
-  "vsbackground.titlebar.opacity": "Menu bar background image opacity, ranging from fully transparent 0 to opaque 1, recommended 0.1",
-  "vsbackground.banner.img": "Banner background image URL, effective when the display area is set to area mode",
-  "vsbackground.banner.opacity": "Banner background image opacity, ranging from fully transparent 0 to opaque 1, recommended 0.1",
-  "vsbackground.activitybar.img": "Activity bar background image URL, effective when the display area is set to area mode",
-  "vsbackground.activitybar.opacity": "Activity bar background image opacity, ranging from fully transparent 0 to opaque 1, recommended 0.1",
-  "vsbackground.sidebar.img": "Main sidebar background image URL, effective when the display area is set to area mode",
-  "vsbackground.sidebar.opacity": "Main sidebar background image opacity, ranging from fully transparent 0 to opaque 1, recommended 0.1",
-  "vsbackground.editor.img": "Editor background image URL, effective when the display area is set to area mode",
-  "vsbackground.editor.opacity": "Editor background image opacity, ranging from fully transparent 0 to opaque 1, recommended 0.1",
-  "vsbackground.panel.img": "Panel background image URL, effective when the display area is set to area mode",
-  "vsbackground.panel.opacity": "Panel background image opacity, ranging from fully transparent 0 to opaque 1, recommended 0.1",
-  "vsbackground.auxiliarybar.img": "Auxiliary sidebar background image URL, effective when the display area is set to area mode",
-  "vsbackground.auxiliarybar.opacity": "Auxiliary sidebar background image opacity, ranging from fully transparent 0 to opaque 1, recommended 0.1",
-  "vsbackground.statusbar.img": "Status bar background image URL, effective when the display area is set to area mode",
-  "vsbackground.statusbar.opacity": "Status bar background image opacity, ranging from fully transparent 0 to opaque 1, recommended 0.1"
-}
+  "vsbackground.description": "It can be configured by opening a visual page through the command 'changeBackground' or clicking the icon in the status bar." ,
+  }

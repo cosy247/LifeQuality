@@ -1,8 +1,11 @@
 {
     "name": "vsBackground",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "displayName": "vsBackground",
     "description": "%vsbackground.description%",
+    "scripts": {
+        "build": "vsce package"
+    },
     "-----------------------------------------[ author ]-----------------------------------------": "",
     "publisher": "cosy247",
     "author": {
@@ -34,7 +37,7 @@
         "customization"
     ],
     "-----------------------------------------[ contributes ]-----------------------------------------": "",
-    "main": "extension",
+    "main": "src/extension.js",
     "contributes": {
         "commands": [
             {
@@ -47,44 +50,44 @@
             "properties": {
                 "vsbackground": {
                     "type": "object",
-                    "description": "%vsbackground.showType%",
+                    "description": "%vsbackground.description%",
                     "default": {
                         "showType": "partition",
                         "full": {
                             "img": "",
-                            "opacity": 0.1
+                            "opacity": 0.05
                         },
                         "titlebar": {
                             "img": "",
-                            "opacity": 0.1
+                            "opacity": 0.05
                         },
                         "banner": {
                             "img": "",
-                            "opacity": 0.15
+                            "opacity": 0.05
                         },
                         "activitybar": {
                             "img": "",
-                            "opacity": 0.1
+                            "opacity": 0.05
                         },
                         "sidebar": {
                             "img": "",
-                            "opacity": 0.1
+                            "opacity": 0.05
                         },
                         "editor": {
                             "img": "",
-                            "opacity": 0.1
+                            "opacity": 0.05
                         },
                         "panel": {
                             "img": "",
-                            "opacity": 0.1
+                            "opacity": 0.05
                         },
                         "auxiliarybar": {
                             "img": "",
-                            "opacity": 0.1
+                            "opacity": 0.05
                         },
                         "statusbar": {
                             "img": "",
-                            "opacity": 0.1
+                            "opacity": 0.05
                         }
                     }
                 }

@@ -1,20 +1,29 @@
 const vscode = require('vscode');
 const path = require('path');
 const fs = require('fs');
-const readline = require('readline');
+const updateCss = require('./updateCss');
 
 const CONFIG_HEAD = 'vsbackground';
 const COMMAND_ID = 'changeBackground';
 
-const getWebViewContent = (context, templatePath) => {
-    const resourcePath = path.join(context.extensionPath, templatePath);
+function getWebViewContent(context, templatePaths) {
+    let html = '';
+    let tempPath = '';
+    for (const templatePath of templatePaths) {
+        try {
+            const resourcePath = path.join(context.extensionPath, templatePath);
+            html = fs.readFileSync(resourcePath, 'utf-8');
+            tempPath = templatePath;
+        } catch (error) {}
+        if (html) break;
+    }
+    const resourcePath = path.join(context.extensionPath, tempPath);
     const dirPath = path.dirname(resourcePath);
-    let html = fs.readFileSync(resourcePath, 'utf-8');
     html = html.replace(/(<link.+?href="|<script.+?src="|<img.+?src=")(.+?)"/g, (m, $1, $2) => {
         return $1 + vscode.Uri.file(path.resolve(dirPath, $2)).with({ scheme: 'vscode-resource' }).toString() + '"';
     });
     return html;
-};
+}
 
 const createSettingPanel = (context) => {
     settingPanel = vscode.window.createWebviewPanel('settingPanel', 'VsBackground', vscode.ViewColumn.One, {
@@ -22,7 +31,7 @@ const createSettingPanel = (context) => {
         retainContextWhenHidden: true,
     });
     settingPanel.iconPath = vscode.Uri.joinPath(context.extensionUri, 'icon.ico');
-    settingPanel.webview.html = getWebViewContent(context, 'frontend/index.html');
+    settingPanel.webview.html = getWebViewContent(context, ['frontend/index.html','resource/index.html']);
     settingPanel.webview.postMessage({
         data: {
             globalConfig: vscode.workspace.getConfiguration(CONFIG_HEAD, vscode.ConfigurationTarget.Global),
@@ -40,23 +49,8 @@ const createSettingPanel = (context) => {
     return settingPanel;
 };
 
-const base = (() => {
-    const mainFilename = require.main?.filename;
-    const vscodeInstallPath = vscode?.env.appRoot;
-    const base = mainFilename?.length ? path.dirname(mainFilename) : path.join(vscodeInstallPath, 'out');
-    return base;
-})();
-
-const jsPath = (() => {
-    if (vscode.env.appHost === 'desktop') {
-        return path.join(base, 'vs', 'workbench', 'workbench.desktop.main.js');
-    }
-    return path.join(base, 'vs', 'workbench', 'workbench.web.main.js');
-})();
-
 module.exports = {
     activate(context) {
-        // vscode.window.showInformationMessage(COMMAND_ID);
         // settingPanel
         let settingPanel = null;
         context.subscriptions.push(
@@ -79,23 +73,13 @@ module.exports = {
         statusBar.show();
 
         // onDidChangeConfiguration
-        vscode.workspace.onDidChangeConfiguration(() => {
-            const fileStream = fs.createReadStream(filePath);
-            readline
-                .createInterface({
-                    input: fileStream,
-                    crlfDelay: Infinity, // 识别Windows风格的行结束符\r\n
-                })
-                .on('line', (line) => {
-                    // 在这里处理每行数据
-                    console.log(line);
-                    // 可以根据需要对line进行解析或进一步处理
-                });
-
-            // settingPanel.webview.postMessage({
-            //     data: settingConfig,
-            //     type: 'config',
-            // });
+        vscode.workspace.onDidChangeConfiguration(async () => {
+            // 更新css
+            await updateCss();
+            // 重启
+            (await vscode.window.showInformationMessage(vscode.l10n.t('背景配置已更新, 是否需要重启?'), {
+                title: '立即重启',
+            })) && vscode.commands.executeCommand('workbench.action.reloadWindow');
         });
     },
 };
