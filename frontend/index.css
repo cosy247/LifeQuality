@@ -8,7 +8,7 @@ body {
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    background: linear-gradient(34deg, #8a7, #77a, #958) 50% / cover no-repeat;
+    background: linear-gradient(34deg, #8a78, #77a8, #9588) 50% / cover no-repeat;
 }
 button {
     width: fit-content;

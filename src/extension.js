@@ -1,10 +1,9 @@
 const vscode = require('vscode');
 const path = require('path');
 const fs = require('fs');
-const updateCss = require('./updateCss');
 
-const CONFIG_HEAD = 'vsbackground';
-const COMMAND_ID = 'changeBackground';
+const { CONFIG_HEAD, COMMAND_ID, FIRST_FLAG_TEMP } = require('./config');
+const { updateJs } = require('./handJs');
 
 function getWebViewContent(context, templatePaths) {
     let html = '';
@@ -31,7 +30,7 @@ const createSettingPanel = (context) => {
         retainContextWhenHidden: true,
     });
     settingPanel.iconPath = vscode.Uri.joinPath(context.extensionUri, 'icon.ico');
-    settingPanel.webview.html = getWebViewContent(context, ['frontend/index.html','resource/index.html']);
+    settingPanel.webview.html = getWebViewContent(context, ['frontend/index.html', 'resource/index.html']);
     settingPanel.webview.postMessage({
         data: {
             globalConfig: vscode.workspace.getConfiguration(CONFIG_HEAD, vscode.ConfigurationTarget.Global),
@@ -50,7 +49,7 @@ const createSettingPanel = (context) => {
 };
 
 module.exports = {
-    activate(context) {
+    async activate(context) {
         // settingPanel
         let settingPanel = null;
         context.subscriptions.push(
@@ -73,11 +72,23 @@ module.exports = {
         statusBar.show();
 
         // onDidChangeConfiguration
-        vscode.workspace.onDidChangeConfiguration(async () => {
-            // 更新css
-            await updateCss();
+        vscode.workspace.onDidChangeConfiguration(async (event) => {
+            if (!event.affectsConfiguration(CONFIG_HEAD)) return;
+            // 更新js
+            await updateJs();
             // 重启
-            (await vscode.window.showInformationMessage(vscode.l10n.t('背景配置已更新, 是否需要重启?'), {
+            (await vscode.window.showInformationMessage('背景配置已更新, 重启后生效?', {
+                title: '立即重启',
+            })) && vscode.commands.executeCommand('workbench.action.reloadWindow');
+        });
+
+        // 检查是否为第一次
+        fs.promises.access(FIRST_FLAG_TEMP).catch(async () => {
+            await fs.promises.writeFile(FIRST_FLAG_TEMP, 'FIRST_FLAG_TEMP');
+            // 更新js
+            await updateJs();
+            // 重启
+            (await vscode.window.showInformationMessage('插件加载成功, 重启后生效?', {
                 title: '立即重启',
             })) && vscode.commands.executeCommand('workbench.action.reloadWindow');
         });

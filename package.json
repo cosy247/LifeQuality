@@ -4,7 +4,8 @@
     "displayName": "vsBackground",
     "description": "%vsbackground.description%",
     "scripts": {
-        "build": "vsce package"
+        "build": "vsce package",
+        "publish": "vsce publish"
     },
     "-----------------------------------------[ author ]-----------------------------------------": "",
     "publisher": "cosy247",
