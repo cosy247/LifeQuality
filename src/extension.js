@@ -5,7 +5,7 @@ const fs = require('fs');
 const { CONFIG_HEAD, COMMAND_ID, FIRST_FLAG_TEMP } = require('./config');
 const { updateJs } = require('./handJs');
 
-function getWebViewContent(context, templatePaths) {
+const getWebViewContent = (context, templatePaths) => {
     let html = '';
     let tempPath = '';
     for (const templatePath of templatePaths) {
@@ -22,7 +22,7 @@ function getWebViewContent(context, templatePaths) {
         return $1 + vscode.Uri.file(path.resolve(dirPath, $2)).with({ scheme: 'vscode-resource' }).toString() + '"';
     });
     return html;
-}
+};
 
 const createSettingPanel = (context) => {
     settingPanel = vscode.window.createWebviewPanel('settingPanel', 'VsBackground', vscode.ViewColumn.One, {
@@ -30,7 +30,7 @@ const createSettingPanel = (context) => {
         retainContextWhenHidden: true,
     });
     settingPanel.iconPath = vscode.Uri.joinPath(context.extensionUri, 'icon.ico');
-    settingPanel.webview.html = getWebViewContent(context, ['frontend/index.html', 'resource/index.html']);
+    settingPanel.webview.html = getWebViewContent(context, ['frontend/frontend.html', 'frontend.html']);
     settingPanel.webview.postMessage({
         data: {
             globalConfig: vscode.workspace.getConfiguration(CONFIG_HEAD, vscode.ConfigurationTarget.Global),

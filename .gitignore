@@ -1,6 +1,6 @@
 node_modules
 .vscode-test/
 *.vsix
-resource
-test
-src/FIRST_FLAG_TEMP.temp
+/test
+/src/FIRST_FLAG_TEMP.temp
+/frontend.html
