@@ -1,7 +1,7 @@
 const vscode = require('vscode');
 const path = require('path');
 const fs = require('fs');
-const { CONFIG_HEAD } = require('./config');
+const { CONFIG_HEAD, FILE_ENCODING } = require('./config');
 
 const disNotification = `
 .notification-toast-container:has([aria-label*='installation appears to be corrupt. Please reinstall.']),
@@ -71,20 +71,20 @@ const getJsContent = () => {
 module.exports = {
     updateJs() {
         return new Promise(async (resolve) => {
-            let jsContent = (await fs.promises.readFile(jsPath, 'utf-8')).toString().replace(/([\t\r\f\n\s]+)$/g, '');
+            let jsContent = (await fs.promises.readFile(jsPath, FILE_ENCODING)).toString().replace(/([\t\r\f\n\s]+)$/g, '');
             jsContent = jsContent.replace(/\/\* vsbackground-js-start \*\/[\s\S]*?\/\* vsbackground-js-end \*\//g, '');
             jsContent += '\n/* vsbackground-js-start */';
             jsContent += getJsContent();
             jsContent += '/* vsbackground-js-end */';
-            await fs.promises.writeFile(jsPath, jsContent, 'utf-8');
+            await fs.promises.writeFile(jsPath, jsContent, FILE_ENCODING);
             resolve();
         });
     },
     clearJs() {
         return new Promise(async (resolve) => {
-            let jsContent = (await fs.promises.readFile(jsPath, 'utf-8')).toString();
+            let jsContent = (await fs.promises.readFile(jsPath, FILE_ENCODING)).toString().replace(/([\t\r\f\n\s]+)$/g, '');
             jsContent = jsContent.replace(/\/\* vsbackground-js-start \*\/[\s\S]*?\/\* vsbackground-js-end \*\//g, '');
-            await fs.promises.writeFile(jsPath, jsContent, 'utf-8');
+            await fs.promises.writeFile(jsPath, jsContent, FILE_ENCODING);
             resolve();
         });
     },

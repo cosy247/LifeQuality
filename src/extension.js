@@ -2,8 +2,8 @@ const vscode = require('vscode');
 const path = require('path');
 const fs = require('fs');
 
-const { CONFIG_HEAD, COMMAND_ID, FIRST_FLAG_TEMP } = require('./config');
-const { updateJs } = require('./handJs');
+const { CONFIG_HEAD, COMMAND_ID, FIRST_FLAG_TEMP, EXTENSION_NAME, FILE_ENCODING } = require('./config');
+const { updateJs, clearJs } = require('./handJs');
 
 const getWebViewContent = (context, templatePaths) => {
     let html = '';
@@ -11,7 +11,7 @@ const getWebViewContent = (context, templatePaths) => {
     for (const templatePath of templatePaths) {
         try {
             const resourcePath = path.join(context.extensionPath, templatePath);
-            html = fs.readFileSync(resourcePath, 'utf-8');
+            html = fs.readFileSync(resourcePath, FILE_ENCODING);
             tempPath = templatePath;
         } catch (error) {}
         if (html) break;
@@ -82,15 +82,24 @@ module.exports = {
             })) && vscode.commands.executeCommand('workbench.action.reloadWindow');
         });
 
-        // 检查是否为第一次
+        // 检查是否为第一次启动
         fs.promises.access(FIRST_FLAG_TEMP).catch(async () => {
-            await fs.promises.writeFile(FIRST_FLAG_TEMP, 'FIRST_FLAG_TEMP');
+            await fs.promises.writeFile(FIRST_FLAG_TEMP, 'FIRST_FLAG_TEMP', FILE_ENCODING);
             // 更新js
             await updateJs();
             // 重启
-            (await vscode.window.showInformationMessage('插件加载成功, 重启后生效?', {
+            (await vscode.window.showInformationMessage(`${EXTENSION_NAME}: 插件加载成功, 重启后修改生效?`, {
                 title: '立即重启',
             })) && vscode.commands.executeCommand('workbench.action.reloadWindow');
         });
+    },
+    async deactivate() {
+        await fs.promises.unlink(FIRST_FLAG_TEMP);
+        // 更新js
+        await clearJs();
+        // 重启
+        (await vscode.window.showInformationMessage(`${EXTENSION_NAME}: 插件卸载成功, 重启后清理修改?`, {
+            title: '立即重启',
+        })) && vscode.commands.executeCommand('workbench.action.reloadWindow');
     },
 };
