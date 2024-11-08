@@ -134,7 +134,12 @@
                         });
                     },
                     saveConfig() {
-                        const message = { data: this.config };
+                        const message = { data: structuredClone(this.config) };
+                        Object.values(message.data).forEach((value) => {
+                            if (typeof value == 'object') {
+                                value.opacity = parseFloat(value.opacity);
+                            }
+                        });
                         if (this.currentConfigTarget === 'global') {
                             message.command = 'saveGlobalConfig';
                         } else if (this.currentConfigTarget === 'workspace') {

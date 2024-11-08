@@ -7,7 +7,7 @@ const { updateJs, clearJs } = require('./handJs');
 
 const getWebViewContent = (context, templatePath) => {
     const resourcePath = path.join(context.extensionPath, templatePath);
-    const html = fs.readFileSync(resourcePath, FILE_ENCODING);
+    let html = fs.readFileSync(resourcePath, FILE_ENCODING);
     const dirPath = path.dirname(resourcePath);
     html = html.replace(/(<link.+?href="|<script.+?src="|<img.+?src=")(.+?)"/g, (m, $1, $2) => {
         return $1 + vscode.Uri.file(path.resolve(dirPath, $2)).with({ scheme: 'vscode-resource' }).toString() + '"';

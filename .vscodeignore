@@ -6,7 +6,6 @@ vsc-extension-quickstart.md
 **/jsconfig.json
 **/*.map
 **/.eslintrc.json
-frontend
 src/FIRST_FLAG_TEMP.temp
 .vscode
 /CONTRIBUTING.md

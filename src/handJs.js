@@ -1,7 +1,7 @@
 const vscode = require('vscode');
 const path = require('path');
 const fs = require('fs');
-const { CONFIG_HEAD, FILE_ENCODING } = require('./config');
+const { CONFIG_HEAD, FILE_ENCODING, EXTENSION_NAME } = require('./config');
 
 const disNotification = `
 .notification-toast-container:has([aria-label*='installation appears to be corrupt. Please reinstall.']),
