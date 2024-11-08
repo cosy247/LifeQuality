@@ -22,7 +22,7 @@
         "url": "https://github.com/cosy247/VscodePlugin-Background/issues"
     },
     "-----------------------------------------[ info ]-----------------------------------------": "",
-    "icon": "icon.png",
+    "icon": "assets/icon.png",
     "engines": {
         "vscode": "^1.54.0"
     },

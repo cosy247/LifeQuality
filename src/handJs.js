@@ -45,47 +45,44 @@ const jsPath = (() => {
     return path.join(base, 'vs', 'workbench', `workbench.${vscode.env.appHost}.main.js`);
 })();
 
-const getJsContent = () => {
+const getJsContent = (clear = false) => {
     const config = vscode.workspace.getConfiguration(CONFIG_HEAD);
     const jsContents = ['{const style = document.createElement("style");style.innerText = `', disNotification];
-    if (config.showType === 'full') {
-        let jsContent = partJs.replace('{part}', 'body');
-        jsContent = jsContent.replace('{after}', 'after');
-        jsContent = jsContent.replace('{img}', config.full.img);
-        jsContent = jsContent.replace('{opacity}', config.full.opacity);
-        jsContents.push(jsContent);
-    } else {
-        partNames.forEach((partName) => {
-            if (!config[partName].img) return;
-            let jsContent = partJs.replace('{part}', `#workbench\\\\.parts\\\\.${partName}`);
-            jsContent = jsContent.replace('{after}', partName === 'statusbar' ? 'before' : 'after');
-            jsContent = jsContent.replace('{img}', config[partName].img);
-            jsContent = jsContent.replace('{opacity}', config[partName].opacity);
+    if (!clear) {
+        if (config.showType === 'full') {
+            let jsContent = partJs.replace('{part}', 'body');
+            jsContent = jsContent.replace('{after}', 'after');
+            jsContent = jsContent.replace('{img}', config.full.img);
+            jsContent = jsContent.replace('{opacity}', config.full.opacity);
             jsContents.push(jsContent);
-        });
+        } else {
+            partNames.forEach((partName) => {
+                if (!config[partName].img) return;
+                let jsContent = partJs.replace('{part}', `#workbench\\\\.parts\\\\.${partName}`);
+                jsContent = jsContent.replace('{after}', partName === 'statusbar' ? 'before' : 'after');
+                jsContent = jsContent.replace('{img}', config[partName].img);
+                jsContent = jsContent.replace('{opacity}', config[partName].opacity);
+                jsContents.push(jsContent);
+            });
+        }
     }
     jsContents.push('`;document.head.appendChild(style);}');
     return jsContents.join(' ').replace(/(\s+|\t|\r|\f|\n)/g, ' ');
 };
 
 module.exports = {
-    updateJs() {
+    updateJs(clear = false) {
         return new Promise(async (resolve) => {
             let jsContent = (await fs.promises.readFile(jsPath, FILE_ENCODING)).toString().replace(/([\t\r\f\n\s]+)$/g, '');
             jsContent = jsContent.replace(/\/\* vsbackground-js-start \*\/[\s\S]*?\/\* vsbackground-js-end \*\//g, '');
             jsContent += '\n/* vsbackground-js-start */';
-            jsContent += getJsContent();
+            jsContent += getJsContent(clear);
             jsContent += '/* vsbackground-js-end */';
             await fs.promises.writeFile(jsPath, jsContent, FILE_ENCODING);
             resolve();
         });
     },
     clearJs() {
-        return new Promise(async (resolve) => {
-            let jsContent = (await fs.promises.readFile(jsPath, FILE_ENCODING)).toString().replace(/([\t\r\f\n\s]+)$/g, '');
-            jsContent = jsContent.replace(/\/\* vsbackground-js-start \*\/[\s\S]*?\/\* vsbackground-js-end \*\//g, '');
-            await fs.promises.writeFile(jsPath, jsContent, FILE_ENCODING);
-            resolve();
-        });
+        return this.updateJs(true);
     },
 };

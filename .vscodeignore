@@ -9,3 +9,6 @@ vsc-extension-quickstart.md
 frontend
 src/FIRST_FLAG_TEMP.temp
 .vscode
+/CONTRIBUTING.md
+/CODE_OF_CONDUCT.md
+/.github

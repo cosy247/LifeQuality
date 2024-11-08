@@ -2,21 +2,12 @@ const vscode = require('vscode');
 const path = require('path');
 const fs = require('fs');
 
-const { CONFIG_HEAD, COMMAND_ID, FIRST_FLAG_TEMP, EXTENSION_NAME, FILE_ENCODING } = require('./config');
+const { CONFIG_HEAD, COMMAND_ID, EXTENSION_NAME, FILE_ENCODING, FIRST_FLAG } = require('./config');
 const { updateJs, clearJs } = require('./handJs');
 
-const getWebViewContent = (context, templatePaths) => {
-    let html = '';
-    let tempPath = '';
-    for (const templatePath of templatePaths) {
-        try {
-            const resourcePath = path.join(context.extensionPath, templatePath);
-            html = fs.readFileSync(resourcePath, FILE_ENCODING);
-            tempPath = templatePath;
-        } catch (error) {}
-        if (html) break;
-    }
-    const resourcePath = path.join(context.extensionPath, tempPath);
+const getWebViewContent = (context, templatePath) => {
+    const resourcePath = path.join(context.extensionPath, templatePath);
+    const html = fs.readFileSync(resourcePath, FILE_ENCODING);
     const dirPath = path.dirname(resourcePath);
     html = html.replace(/(<link.+?href="|<script.+?src="|<img.+?src=")(.+?)"/g, (m, $1, $2) => {
         return $1 + vscode.Uri.file(path.resolve(dirPath, $2)).with({ scheme: 'vscode-resource' }).toString() + '"';
@@ -29,8 +20,8 @@ const createSettingPanel = (context) => {
         enableScripts: true,
         retainContextWhenHidden: true,
     });
-    settingPanel.iconPath = vscode.Uri.joinPath(context.extensionUri, 'icon.ico');
-    settingPanel.webview.html = getWebViewContent(context, ['frontend/frontend.html', 'frontend.html']);
+    settingPanel.iconPath = vscode.Uri.joinPath(context.extensionUri, 'assets/icon.ico');
+    settingPanel.webview.html = getWebViewContent(context, 'frontend/index.html');
     settingPanel.webview.postMessage({
         data: {
             globalConfig: vscode.workspace.getConfiguration(CONFIG_HEAD, vscode.ConfigurationTarget.Global),
@@ -48,8 +39,21 @@ const createSettingPanel = (context) => {
     return settingPanel;
 };
 
+const changeFirstFlag = async () => {
+    // 修改配置
+    const configJsPath = path.join(__dirname, 'config.js');
+    const configJs = await fs.promises.readFile(configJsPath, FILE_ENCODING);
+    fs.promises.writeFile(configJsPath, configJs.replace('FIRST_FLAG: true', 'FIRST_FLAG: false'), FILE_ENCODING);
+    // 更新js
+    await updateJs();
+    // 重启
+    (await vscode.window.showInformationMessage(`${EXTENSION_NAME}: 插件首次加载成功, 历史配置重启后生效。`, {
+        title: '立即重启',
+    })) && vscode.commands.executeCommand('workbench.action.reloadWindow');
+};
+
 module.exports = {
-    async activate(context) {
+    activate(context) {
         // settingPanel
         let settingPanel = null;
         context.subscriptions.push(
@@ -77,28 +81,19 @@ module.exports = {
             // 更新js
             await updateJs();
             // 重启
-            (await vscode.window.showInformationMessage('背景配置已更新, 重启后生效?', {
+            (await vscode.window.showInformationMessage('背景配置已更新, 重启后生效。', {
                 title: '立即重启',
             })) && vscode.commands.executeCommand('workbench.action.reloadWindow');
         });
 
-        // 检查是否为第一次启动
-        fs.promises.access(FIRST_FLAG_TEMP).catch(async () => {
-            await fs.promises.writeFile(FIRST_FLAG_TEMP, 'FIRST_FLAG_TEMP', FILE_ENCODING);
-            // 更新js
-            await updateJs();
-            // 重启
-            (await vscode.window.showInformationMessage(`${EXTENSION_NAME}: 插件加载成功, 重启后修改生效?`, {
-                title: '立即重启',
-            })) && vscode.commands.executeCommand('workbench.action.reloadWindow');
-        });
+        // 是否为第一次
+        FIRST_FLAG && changeFirstFlag();
     },
     async deactivate() {
-        await fs.promises.unlink(FIRST_FLAG_TEMP);
         // 更新js
         await clearJs();
         // 重启
-        (await vscode.window.showInformationMessage(`${EXTENSION_NAME}: 插件卸载成功, 重启后清理修改?`, {
+        (await vscode.window.showInformationMessage(`${EXTENSION_NAME}: 插件卸载成功, 重启后清理修改。`, {
             title: '立即重启',
         })) && vscode.commands.executeCommand('workbench.action.reloadWindow');
     },
