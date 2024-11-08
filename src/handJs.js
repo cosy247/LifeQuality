@@ -73,8 +73,8 @@ const getJsContent = (clear = false) => {
 module.exports = {
     updateJs(clear = false) {
         return new Promise(async (resolve) => {
-            let jsContent = (await fs.promises.readFile(jsPath, FILE_ENCODING)).toString().replace(/([\t\r\f\n\s]+)$/g, '');
-            jsContent = jsContent.replace(/\/\* vsbackground-js-start \*\/[\s\S]*?\/\* vsbackground-js-end \*\//g, '');
+            let jsContent = (await fs.promises.readFile(jsPath, FILE_ENCODING)).toString();
+            jsContent = jsContent.replace(/\n\/\* vsbackground-js-start \*\/[\s\S]*?\/\* vsbackground-js-end \*\//g, '');
             jsContent += '\n/* vsbackground-js-start */';
             jsContent += getJsContent(clear);
             jsContent += '/* vsbackground-js-end */';
